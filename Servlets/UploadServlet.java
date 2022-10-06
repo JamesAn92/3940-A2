@@ -1,4 +1,4 @@
-package Servlets;
+package servlets;
 
 import router.HttpRequest;
 import router.HttpResponse;
@@ -6,7 +6,15 @@ import java.io.*;
 import java.time.Clock;
 
 public class UploadServlet extends HttpServlet {
-    protected void doPost(HttpRequest request, HttpResponse response) {
+
+    @Override
+    public void doGet(HttpRequest request, HttpResponse response) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void doPost(HttpRequest request, HttpResponse response) {
         try {
             InputStream in = request.getInputStream();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

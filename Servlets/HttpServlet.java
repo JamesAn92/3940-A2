@@ -1,9 +1,7 @@
-public abstract class HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        return;
-    };
+package servlets;
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        return;
-    };
+import router.*;
+public interface HttpServlet {
+    public void doGet(HttpRequest request, HttpResponse response);
+    public void doPost(HttpRequest request, HttpResponse response);
 }

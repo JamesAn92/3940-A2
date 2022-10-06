@@ -1,15 +1,14 @@
 package router;
 
-import java.io.InputStream;
-
-import java.io.OutputStream;
-import java.lang.Object;
+import 3940ASS2,servlets.*;
 import java.net.Socket;
-
-import javax.swing.tree.ExpandVetoException;
 
 public class Router extends Thread {
 
+    final String POST = "POST";
+    final String GET = "GET";
+
+    private Class<?> myClass; 
     private Socket socket;
 
     public Router(Socket socket) {
@@ -19,12 +18,35 @@ public class Router extends Thread {
 
     @Override
     public void run() {
+        HttpRequest request;
+        HttpResponse response;
         try {
-            HttpRequest request = new HttpRequest(socket.getInputStream());
-            HttpResponse response = new HttpResponse(socket.getOutputStream());
+            request = new HttpRequest(socket.getInputStream());
+            response = new HttpResponse(socket.getOutputStream());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
+        }
+
+        // Reflection
+        // Because we only have one URL we will only use UploadServlet
+        HttpServlet thread; 
+        try {
+            myClass = Class.forName("Servlets.UploadServlet");
+            thread = (HttpServlet) myClass.newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return; 
+        }
+
+
+        // call appropriate method
+        switch (request.getMethod()) {
+            case GET:
+                thread.doGet(request, response);
+            case POST:
+                thread.doPost(request, response);    
         }
     }
 
