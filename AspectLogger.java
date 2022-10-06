@@ -1,10 +1,10 @@
 
-
 import java.io.IOException;
 
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.JoinPoint;
@@ -12,19 +12,13 @@ import org.aspectj.lang.JoinPoint;
 @Aspect
 public class AspectLogger {
 
-    @Pointcut("execution(public static void Server.main(String[]))")
-    public void stuff() {
-
+    @Pointcut("within(*) && execution(* *(..))")
+    public void matchAllMyMethods() {
     }
 
-    @After("stuff()")
-    public void after(){
-        System.out.println("cum");
+    @AfterThrowing(value = "matchAllMyMethods()", throwing = "exception")
+    public void doSomethingWithException(JoinPoint joinPoint, Throwable exception) {
+        // get access to the actual exception thrown
+        System.out.println(exception);
     }
-
-    @AfterThrowing (pointcut = "stuff()", throwing = "e")
-    private void afterTestCall(JoinPoint thisJoinPoint, Exception e) {
-        System.out.println("Logging before APIError:test is called...");
-    }
-    
 }
