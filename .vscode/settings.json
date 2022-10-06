@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "aspectj\\lib\\aspectjrt.jar",
+        "aspectj\\lib\\aspectjtools.jar",
+        "aspectj\\lib\\aspectjweaver.jar"
+    ]
+}

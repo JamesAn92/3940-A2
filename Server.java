@@ -1,7 +1,7 @@
 import java.net.*;
 import java.io.*;
 
-import router.Router;
+//import router.Router;
 
 public class Server {
     public static void main(String[] args) throws IOException {
@@ -17,6 +17,8 @@ public class Server {
             new Router(serverSocket.accept()).start();
         }
 
+        Exception e = new IOException();
+        throw e;
     }
 
 }
