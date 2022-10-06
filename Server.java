@@ -13,9 +13,10 @@ public class Server {
             System.exit(-1);
         }
         while (true) {
-            System.out.println("Hello");
+            System.out.println("Waiting for connection.....");
             new Router(serverSocket.accept()).start();
         }
+
     }
 
 }

@@ -6,7 +6,8 @@ public class HttpResponse {
     private OutputStream outputStream = null;
 
     public HttpResponse(OutputStream outputStream) {
-        System.out.println("HttpResponse");
+        // System.out.println(outputStream);
+        // System.out.println("HttpResponse");
         this.outputStream = outputStream;
     }
 

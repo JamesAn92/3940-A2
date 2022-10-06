@@ -11,6 +11,7 @@ public class Activity {
     }
 
     public Activity() {
+        System.out.println("Activity constructor");
     }
 
     public void onCreate() {
