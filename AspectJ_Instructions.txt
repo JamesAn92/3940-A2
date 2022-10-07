@@ -9,12 +9,12 @@ Otherwise perform the following steps:
 3.  copy the HelloWorld.java and BasicAspect.java into c:/temp/aop folder.  
     compile the two files by typing the following at the command window:  
     cd c:\temp\aop
-    javac -g �classpath .;c:\temp\aop\aspectj\lib\aspectjrt.jar;c:\temp\aop\aspectj\lib\aspectjweaver.jar BasicAspect.java HelloWorld.java
+    javac -g -classpath .;aspectj\lib\aspectjrt.jar;aspectj\lib\aspectjweaver.jar *.java servlet\*.java router\*.java CLI\*.java exceptions\*.java
 4.  create c:\temp\aop\com\example\aspects and move the BasicAspect.class into this folder
 5.  create c:\temp\aop\META-INF folder and copy aop.xml in that folder.  
 6.  On the command window type the following:
     cd c:\temp\aop
-    java �javaagent:c:\temp\aop\aspectj\lib\aspectjweaver.jar -classpath .;c:\temp\aop\aspectj\lib\aspectjrt.jar;c:\temp\aop\aspectj\lib\aspectjweaver.jar HelloWorld
+    java -javaagent:aspectj\lib\aspectjweaver.jar -classpath .;aspectj\lib\aspectjrt.jar;c:\temp\aop\aspectj\lib\aspectjweaver.jar Server
 
     You will see the following output:
 

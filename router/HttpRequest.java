@@ -12,7 +12,7 @@ public class HttpRequest {
     private InputStream inputStream = null;
     private HashMap<String, String> keyValues = new HashMap<String, String>();
 
-    public HttpRequest(InputStream inputStream) throws IOException {
+    public HttpRequest(InputStream inputStream) throws Exception {
         System.out.println("Hello I am");
         this.inputStream = inputStream;
         String wholeStream = "";
@@ -35,7 +35,7 @@ public class HttpRequest {
     }
 
     // Parse header and store into Hashmap
-    private void parseHeaders(String[] stream) {
+    private void parseHeaders(String[] stream) throws ArrayIndexOutOfBoundsException {
         for (int i = 1; i < stream.length - 1; i++) {
             String[] tempValue = stream[i].split(": ");
             keyValues.put(tempValue[0].trim(), tempValue[1].trim());

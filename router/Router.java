@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import exceptions.APIError;
 
 public class Router extends Thread {
 
@@ -41,13 +42,18 @@ public class Router extends Thread {
                     thread.doPost(request, response);
                     break;
             }
+
             OutputStream out = socket.getOutputStream();
             out.write(response.newBuilder().toByteArray());
             socket.close();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-            return;
+            if (e.getClass() == APIError.class) {
+                System.out.println("APIError");
+            }
+
+        } finally {
+
         }
         /*
          * Multi trycatch

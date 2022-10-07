@@ -2,6 +2,6 @@
 <aspectj>
     <aspects>
         <!-- <aspect name="com.example.aspects.BasicAspect"/> -->
-        <aspect name="AspectLogger"></aspect>
+        <aspect name="exceptions.AspectLogger"></aspect>
     </aspects>
 </aspectj>
