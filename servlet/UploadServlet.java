@@ -29,7 +29,6 @@ public class UploadServlet implements HttpServlet {
             writer.write("<br />\n".getBytes());
             writer.write("<input type=\"submit\" value=\"Submit\"/>\r\n".getBytes());
             writer.write("</form>\r\n".getBytes());
-
             writer.write("</body>\r\n".getBytes());
             writer.write("</html>\r\n".getBytes());
         } catch (Exception e) {
@@ -40,29 +39,15 @@ public class UploadServlet implements HttpServlet {
 
     @Override
     public void doPost(HttpRequest request, HttpResponse response) {
-        try {
-            InputStream in = request.getInputStream();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] content = new byte[1];
-            int bytesRead = -1;
-            while ((bytesRead = in.read(content)) != -1) {
-                baos.write(content, 0, bytesRead);
-            }
-            Clock clock = Clock.systemDefaultZone();
-            long milliSeconds = clock.millis();
-            OutputStream outputStream = new FileOutputStream(new File(String.valueOf(milliSeconds) + ".png"));
-            baos.writeTo(outputStream);
-            outputStream.close();
-            PrintWriter out = new PrintWriter(response.getOutputStream(), true);
-            File dir = new File(".");
-            String[] chld = dir.list();
-            for (int i = 0; i < chld.length; i++) {
-                String fileName = chld[i];
-                out.println(fileName + "\n");
-                System.out.println(fileName);
-            }
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
+
+        // Get image from request
+
+        // Upload image to DB
+
+        // if error send back API error
+
+        // if Browser send back 200 with empty body
+
+        // if client send back 200 with list of images in db for user
     }
 }

@@ -13,7 +13,6 @@ public class HttpRequest {
     private HashMap<String, String> keyValues = new HashMap<String, String>();
 
     public HttpRequest(InputStream inputStream) throws IOException {
-        System.out.println("Hello I am");
         this.inputStream = inputStream;
         String wholeStream = "";
         while (inputStream.available() != 0) {
