@@ -1,13 +1,12 @@
-package cli;
+package CLI;
 
 import java.io.*;
-import cli.UploadClient;
 
 public class Activity {
     private String dirName = null;
 
-    public static void main(String[] args) throws IOException {
-        new Activity().onCreate();
+    public static void main(String[] args) {
+        new CLI.Activity().onCreate();
     }
 
     public Activity() {

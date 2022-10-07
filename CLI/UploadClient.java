@@ -1,4 +1,4 @@
-package cli;
+package CLI;
 
 import java.io.*;
 import java.net.*;
@@ -15,11 +15,11 @@ public class UploadClient {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
             OutputStream out = socket.getOutputStream();
-            FileInputStream fis = new FileInputStream("AndroidLogo.png");
-            byte[] bytes = fis.readAllBytes();
-            out.write(bytes);
+            // FileInputStream fis = new FileInputStream("AndroidLogo.png");
+            // byte[] bytes = fis.readAllBytes();
+            out.write(2);
             socket.shutdownOutput();
-            fis.close();
+            // fis.close();
             System.out.println("Came this far\n");
             String filename = "";
             while ((filename = in.readLine()) != null) {
