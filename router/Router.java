@@ -23,7 +23,7 @@ public class Router extends Thread {
     @Override
     public void run() {
         try {
-            OutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             HttpRequest request = new HttpRequest(socket.getInputStream());
             HttpResponse response = new HttpResponse(baos);
 
@@ -42,7 +42,7 @@ public class Router extends Thread {
                     break;
             }
             OutputStream out = socket.getOutputStream();
-            out.write(((ByteArrayOutputStream) baos).toByteArray());
+            out.write(response.newBuilder().toByteArray());
             socket.close();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
             // TODO Auto-generated catch block

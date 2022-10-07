@@ -17,7 +17,7 @@ public class UploadClient {
             OutputStream out = socket.getOutputStream();
             // FileInputStream fis = new FileInputStream("AndroidLogo.png");
             // byte[] bytes = fis.readAllBytes();
-            out.write(2);
+            out.write("This is a test".getBytes());
             socket.shutdownOutput();
             // fis.close();
             System.out.println("Came this far\n");

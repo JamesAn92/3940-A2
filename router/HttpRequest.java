@@ -2,7 +2,6 @@ package router;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class HttpRequest {
@@ -20,6 +19,7 @@ public class HttpRequest {
         while (inputStream.available() != 0) {
             wholeStream += (char) inputStream.read();
         }
+        System.out.println(wholeStream);
         // Splits the stream into lines and stores into array
         String[] arrayStream = wholeStream.split("\n");
         parseMethodAndProtocol(arrayStream[0]);

@@ -9,8 +9,13 @@ public class UploadServlet implements HttpServlet {
 
     @Override
     public void doGet(HttpRequest request, HttpResponse response) {
-        // TODO Auto-generated method stub
-        System.out.println("Upload doGET");
+        try {
+            // TODO Auto-generated method stub
+            System.out.println("Upload doGET");
+            response.getOutputStream().write("cum".getBytes());
+        } catch (Exception e) {
+            System.err.println(e);
+        }
 
     }
 
