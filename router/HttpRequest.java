@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class HttpRequest {
 
-    private String method; 
+    private String method;
     private String URL;
     private String version;
     private InputStream inputStream = null;
@@ -36,10 +36,14 @@ public class HttpRequest {
 
     // Parse header and store into Hashmap
     private void parseHeaders(String[] stream) {
-        for(int i = 1; i < stream.length - 1; i++) {
+        for (int i = 1; i < stream.length - 1; i++) {
             String[] tempValue = stream[i].split(": ");
             keyValues.put(tempValue[0].trim(), tempValue[1].trim());
         }
+    }
+
+    public InputStream getInputStream() {
+        return inputStream;
     }
 
     public String getMethod() {
@@ -53,12 +57,15 @@ public class HttpRequest {
     public String getURL() {
         return URL;
     }
+
     public void setURL(String uRL) {
         URL = uRL;
     }
+
     public String getVersion() {
         return version;
     }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -67,12 +74,7 @@ public class HttpRequest {
         return keyValues.get(headerKey);
     }
 
-    
- 
-
 }
-
-
 
 // GET / HTTP/1.1
 // HOST:localhost:8999

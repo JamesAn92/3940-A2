@@ -10,6 +10,7 @@ public class UploadServlet implements HttpServlet {
     @Override
     public void doGet(HttpRequest request, HttpResponse response) {
         // TODO Auto-generated method stub
+        System.out.println("Upload doGET");
 
     }
 
