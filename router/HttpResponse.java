@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 public class HttpResponse {
     private final String HTTP_VERSION = "HTTP/1.1";
     private String status = "200";
+    private String statusPhrase = "OK";
     private ByteArrayOutputStream privateStream;
     private ByteArrayOutputStream publicStream = new ByteArrayOutputStream();
     private HashMap<String, Object> headers = new HashMap<>();
@@ -68,6 +69,6 @@ public class HttpResponse {
     }
 
     private void buildResponseHead() throws IOException {
-        privateStream.write((HTTP_VERSION + " " + status + " " + "bitch" + "\r\n").getBytes());
+        privateStream.write((HTTP_VERSION + " " + status + " " + statusPhrase + "\r\n").getBytes());
     }
 }
