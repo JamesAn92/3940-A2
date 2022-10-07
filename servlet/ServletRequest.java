@@ -1,10 +1,15 @@
-package servlets;
+package servlet;
 
 import java.io.*;
+
 public class ServletRequest {
    private InputStream inputStream = null;
+
    public ServletRequest(InputStream inputStream) {
       this.inputStream = inputStream;
    }
-   public InputStream getInputStream() {return inputStream;}
+
+   public InputStream getInputStream() {
+      return inputStream;
+   }
 }

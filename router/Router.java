@@ -1,6 +1,6 @@
 package router;
 
-import 3940ASS2,servlets.*;
+import servlet.*;
 import java.net.Socket;
 
 public class Router extends Thread {
@@ -8,7 +8,7 @@ public class Router extends Thread {
     final String POST = "POST";
     final String GET = "GET";
 
-    private Class<?> myClass; 
+    private Class<?> myClass;
     private Socket socket;
 
     public Router(Socket socket) {
@@ -30,23 +30,22 @@ public class Router extends Thread {
 
         // Reflection
         // Because we only have one URL we will only use UploadServlet
-        HttpServlet thread; 
+        HttpServlet thread;
         try {
             myClass = Class.forName("Servlets.UploadServlet");
             thread = (HttpServlet) myClass.newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return; 
+            return;
         }
-
 
         // call appropriate method
         switch (request.getMethod()) {
             case GET:
                 thread.doGet(request, response);
             case POST:
-                thread.doPost(request, response);    
+                thread.doPost(request, response);
         }
     }
 
