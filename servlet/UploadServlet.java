@@ -10,28 +10,32 @@ public class UploadServlet implements HttpServlet {
     @Override
     public void doGet(HttpRequest request, HttpResponse response) {
         try {
-            // TODO Auto-generated method stub
-            System.out.println("Upload doGET");
-            ByteArrayOutputStream writer = response.getOutputStream();
-            writer.write("<!DOCTYPE html>\r\n".getBytes());
-            writer.write("<html>\r\n".getBytes());
-            writer.write("    <head>\r\n".getBytes());
-            writer.write("        <title>File Upload Form</title>\r\n".getBytes());
-            writer.write("    </head>\r\n".getBytes());
-            writer.write("    <body>\r\n".getBytes());
-            writer.write("<h1>Upload file</h1>\r\n".getBytes());
-            writer.write("<form method=\"POST\" action=\"upload\" ".getBytes());
-            writer.write("enctype=\"multipart/form-data\">\r\n".getBytes());
-            writer.write("<input type=\"file\" name=\"fileName\"/><br/><br/>\r\n".getBytes());
-            writer.write("Caption: <input type=\"text\" name=\"caption\"<br/><br/>\r\n".getBytes());
-            writer.write("<br />\n".getBytes());
-            writer.write("Date: <input type=\"date\" name=\"date\"<br/><br/>\r\n".getBytes());
-            writer.write("<br />\n".getBytes());
-            writer.write("<input type=\"submit\" value=\"Submit\"/>\r\n".getBytes());
-            writer.write("</form>\r\n".getBytes());
+            if (isCLI(request)) {
+                // TODO CLI GET
+            } else {
+                // TODO Auto-generated method stub
+                System.out.println("Upload doGET");
+                ByteArrayOutputStream writer = response.getOutputStream();
+                writer.write("<!DOCTYPE html>\r\n".getBytes());
+                writer.write("<html>\r\n".getBytes());
+                writer.write("    <head>\r\n".getBytes());
+                writer.write("        <title>File Upload Form</title>\r\n".getBytes());
+                writer.write("    </head>\r\n".getBytes());
+                writer.write("    <body>\r\n".getBytes());
+                writer.write("<h1>Upload file</h1>\r\n".getBytes());
+                writer.write("<form method=\"POST\" action=\"upload\" ".getBytes());
+                writer.write("enctype=\"multipart/form-data\">\r\n".getBytes());
+                writer.write("<input type=\"file\" name=\"fileName\"/><br/><br/>\r\n".getBytes());
+                writer.write("Caption: <input type=\"text\" name=\"caption\"<br/><br/>\r\n".getBytes());
+                writer.write("<br />\n".getBytes());
+                writer.write("Date: <input type=\"date\" name=\"date\"<br/><br/>\r\n".getBytes());
+                writer.write("<br />\n".getBytes());
+                writer.write("<input type=\"submit\" value=\"Submit\"/>\r\n".getBytes());
+                writer.write("</form>\r\n".getBytes());
 
-            writer.write("</body>\r\n".getBytes());
-            writer.write("</html>\r\n".getBytes());
+                writer.write("</body>\r\n".getBytes());
+                writer.write("</html>\r\n".getBytes());
+            }
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -65,4 +69,9 @@ public class UploadServlet implements HttpServlet {
             System.err.println(ex);
         }
     }
+
+    private boolean isCLI(HttpServletRequest request) {
+        return Boolean.parseBoolean((String) request.getHeader("isCLI"));
+    }
+
 }
