@@ -26,6 +26,7 @@ public class UploadClient {
                 listing += filename;
             }
             socket.shutdownInput();
+            socket.close();
         } catch (Exception e) {
             System.err.println(e);
         }
