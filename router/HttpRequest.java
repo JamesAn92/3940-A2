@@ -11,6 +11,7 @@ public class HttpRequest {
     private String version;
     private InputStream inputStream = null;
     private HashMap<String, String> keyValues = new HashMap<String, String>();
+    private String boundary = null;
 
     public HttpRequest(InputStream inputStream) throws IOException {
         this.inputStream = inputStream;
@@ -21,8 +22,9 @@ public class HttpRequest {
         System.out.println(wholeStream);
         // Splits the stream into lines and stores into array
         String[] arrayStream = wholeStream.split("\n");
-        parseMethodAndProtocol(arrayStream[0]);
+        int currentParseIndex = parseMethodAndProtocol(arrayStream[0]);
         parseHeaders(arrayStream);
+
     }
 
     // Sets method, url, version from first line of inputstream
@@ -34,9 +36,22 @@ public class HttpRequest {
     }
 
     // Parse header and store into Hashmap
-    private void parseHeaders(String[] stream) {
+    private int parseHeaders(String[] stream) {
         for (int i = 1; i < stream.length - 1; i++) {
+            // check if we reach the boudary between body and headers (/r/n)
+            if (stream[i].equals("\r\n")) {
+                System.out.println("fuck yes we have reached the end of the header");
+                return i;
+            }
             String[] tempValue = stream[i].split(": ");
+
+            // if we reach content type obtain the boundary
+            if (tempValue[0].equals("Content-Type") && tempValue[1].contains("multipart/form-data")) {
+                boundary = tempValue[1].split(";")[1].split("=")[1];
+                System.out.println("boundary: " + boundary);
+            }
+
+            // store headers in a map
             keyValues.put(tempValue[0].trim(), tempValue[1].trim());
         }
     }
