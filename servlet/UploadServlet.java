@@ -11,7 +11,7 @@ public class UploadServlet implements HttpServlet {
     public void doGet(HttpRequest request, HttpResponse response) {
         try {
             // TODO Auto-generated method stub
-            System.out.println("Upload doGET");
+            // System.out.println("Upload doGET");
             ByteArrayOutputStream writer = response.getOutputStream();
             writer.write("<!DOCTYPE html>\r\n".getBytes());
             writer.write("<html>\r\n".getBytes());

@@ -3,6 +3,7 @@ package router;
 import servlet.*;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -16,7 +17,7 @@ public class Router extends Thread {
     private Socket socket;
 
     public Router(Socket socket) {
-        System.out.println("Router");
+        // System.out.println("Router");
         this.socket = socket;
     }
 
@@ -44,7 +45,8 @@ public class Router extends Thread {
             OutputStream out = socket.getOutputStream();
             out.write(response.newBuilder().toByteArray());
             socket.close();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException
+                | IOException | InvocationTargetException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return;
