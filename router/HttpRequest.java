@@ -2,6 +2,7 @@ package router;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class HttpRequest {
@@ -22,8 +23,16 @@ public class HttpRequest {
         System.out.println(wholeStream);
         // Splits the stream into lines and stores into array
         String[] arrayStream = wholeStream.split("\n");
-        int currentParseIndex = parseMethodAndProtocol(arrayStream[0]);
-        parseHeaders(arrayStream);
+        parseMethodAndProtocol(arrayStream[0]);
+        int currentParseIndex = parseHeaders(arrayStream);
+
+        if (keyValues.containsKey("Content-Type") && keyValues.get("Content-Type").equals("multipart/form-data")) {
+            // Parse body as form data 
+            parseFormData(arrayStream, currentParseIndex);
+            return; 
+        }
+
+        // If not form data
 
     }
 
@@ -39,10 +48,13 @@ public class HttpRequest {
     private int parseHeaders(String[] stream) {
         for (int i = 1; i < stream.length - 1; i++) {
             // check if we reach the boudary between body and headers (/r/n)
-            if (stream[i].equals("\r\n")) {
+            if (stream[i].equals("\r")) {
                 System.out.println("fuck yes we have reached the end of the header");
                 return i;
             }
+
+            //System.out.println("this is a line: " + Arrays.toString(stream[i].getBytes()));
+
             String[] tempValue = stream[i].split(": ");
 
             // if we reach content type obtain the boundary
@@ -54,6 +66,11 @@ public class HttpRequest {
             // store headers in a map
             keyValues.put(tempValue[0].trim(), tempValue[1].trim());
         }
+        return -1;
+    }
+
+    private void parseFormData(String[] stream, int startingIndex) {
+        
     }
 
     public InputStream getInputStream() {
