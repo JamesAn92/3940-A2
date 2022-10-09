@@ -1,9 +1,12 @@
 package router;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import javax.swing.JPopupMenu.Separator;
 
 public class HttpRequest {
 
@@ -26,12 +29,12 @@ public class HttpRequest {
             wholeStream += (char) inputStream.read();
         }
 
+        System.out.println(wholeStream);
+
         seperatedRequest = serperateRequest(wholeStream);
         head = seperatedRequest[0].split("\r\n");
 
         body = seperatedRequest[1];
-
-        // System.out.println(wholeStream + "\r\n\r\n");
 
         // Splits the stream into lines and stores into array
         String[] arrayStream = wholeStream.split("\n");
@@ -42,12 +45,10 @@ public class HttpRequest {
                 keyValues.get("Content-Type").equals("multipart/form-data")) {
             // Parse body as form data
             parseFormData(body);
-            return;
-        }
-
+        } else {
         // If not form data
         // parseBody();
-
+        }
     }
 
     // Sets method, url, version from first line of inputstream
@@ -81,9 +82,9 @@ public class HttpRequest {
      */
     private String[] serperateRequest(String stream) {
         String[] result = new String[2];
-        for (int i = 0; i < stream.length(); i++) {
+        for (int i = 0; i < stream.length() - HEAD_BODY_DELIM.length(); i++) {
             if (stream.substring(i, i + HEAD_BODY_DELIM.length()).equals(HEAD_BODY_DELIM)) {
-                result[0] = stream.substring(0, i + 2);
+                result[0] = stream.substring(0, i);
                 result[1] = stream.substring(i + HEAD_BODY_DELIM.length());
                 return result;
             }
@@ -100,68 +101,72 @@ public class HttpRequest {
      * @param startingIndex
      */
     private void parseFormData(String stream) {
-        System.out.println(stream);
+        String[] separatedByBoundary = stream.split(boundary);
 
-        String[] seperatedFormData = stream.split(boundary);
+        // loop through each form data (start at 1 to discard the item before the first boundary because all it consists of is /r/n)
+        for (int i = 1; i < separatedByBoundary.length; i++) {
+            String[] separatedFormData = serperateRequest(separatedByBoundary[i]);
+            String formDataHead = separatedFormData[0];
+            String formDataBody = separatedFormData[1];
 
-        String[] temp = seperatedFormData[1].split("\r\n");
-        System.out.println("Holy shit im here");
+            if (formDataHead == null) {
+                // if for some reason there is no head in the form data early, we are done
+                return;
+            }
 
-        // parse the content disposition
-        String contentDisposition = temp[1];
-        parseContentDisposition(contentDisposition);
+            // parse the head of the current form data
 
-        // parse th content type
-        String[] contentType = temp[2].split(":");
-        // image.put(contentType[0], contentType[1]);
+            String key = null;
+            String[] formDataHeadLines = formDataHead.split("\r\n");
+            for (int j = 0; j < formDataHeadLines.length; j++) {
+                if (!formDataHeadLines[j].isBlank()) {
+                    
+                    String[] keyVal = formDataHeadLines[j].split(":");
+                    if (keyVal[0].contains("Content-Disposition")) {
+                        key = parseContentDisposition(keyVal[1]);
+                    } else {
+                        System.out.println("content data parsed:");
+                        System.out.println(keyVal[0].trim());
+                        System.out.println(keyVal[1].trim());
+                        keyValues.put(keyVal[0].trim(), keyVal[1].trim());
+                    }
+                }
+            }
 
-        // we have to parse an image
-        if (contentType[0] != null && contentType[1].contains("image")) {
+            // parse the body of the form data
+            System.out.println("body parsed: ");
+            System.out.println(formDataBody.trim());
+            System.out.println("end body parsed");
 
-        } else {
-            // we have to parse a value
+            if (image.get(key) == null) {
+                // if there is NO value for the image key, then we don't have an image!
+                keyValues.put(key, formDataBody.trim());
+            } else {
+                // if there is a value for the image key, that is the filepath, map it to the image
+                image.put(image.get(key), formDataBody);
+            }
         }
 
-        // parse the image
-
-        // String testing = temp[5];
-        // System.out.println(values[0]);
-        // System.out.println(values[1]);
-        // System.out.println(values[2]);
-        // Arrays.toString(temp);
-        // System.out.println("1");
-        // System.out.println(temp[1]);
-
-        // System.out.println("2");
-        // System.out.println(temp[2]);
-
-        // System.out.println("3");
-        // System.out.println(temp[3]);
-
-        // System.out.println("4");
-        // System.out.println(temp[4]);
-
-        // System.out.println("5");
-        // System.out.println(temp[5]);
-
-        // System.out.println("6");
-        // System.out.println(temp[6]);
     }
 
-    private void parseContentDisposition(String contentDisposition) {
+    private String parseContentDisposition(String contentDisposition) {
+        // split the content disposition
         String[] contentDispositionVals = contentDisposition.split(";");
-        for (int i = 1; i < contentDispositionVals.length; i++) {
-            String[] keyVals = contentDispositionVals[i].split("=");
-            System.out.println(keyVals[0]);
-            System.out.println(keyVals[1]);
+
+        // get the key (start at index 1 because we want to ignore 'form-data')
+        System.out.println(contentDispositionVals[1]);
+        String keyWithQuotes = contentDispositionVals[1].trim().split("=")[1];
+        String key = keyWithQuotes.substring(1, keyWithQuotes.length() - 1);
+        
+        //if the length is greater than 1, then we have a file path, store it to the value of the key
+        if (contentDispositionVals.length > 2) {
+            String fileNameWithQuotes = contentDispositionVals[2].trim().split("=")[1];
+            String fileName = fileNameWithQuotes.substring(1, fileNameWithQuotes.length() - 1);
+            image.put(key, fileName);
+        } else {
+            image.put(key, null);
         }
-    }
-
-    private void parseFormDataElement(String currentFormData) {
-
-    }
-
-    private void parseBody(String[] stream, int startingIndex) {
+        return key;
     }
 
     public InputStream getInputStream() {
@@ -194,6 +199,19 @@ public class HttpRequest {
 
     public String getAttribute(String headerKey) {
         return keyValues.get(headerKey);
+    }
+
+    public String getFile(String fileName) {
+        return image.get(fileName);
+        //return new FileInputStream(image.get(fileName));
+    }
+
+    public String getValue(String key) {
+        return keyValues.get(key);
+    }
+
+    public String getFileName(String imageName) {
+        return image.get(imageName);
     }
 
 }

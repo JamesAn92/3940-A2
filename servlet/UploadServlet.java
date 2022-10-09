@@ -39,15 +39,52 @@ public class UploadServlet implements HttpServlet {
 
     @Override
     public void doPost(HttpRequest request, HttpResponse response) {
-
-        // Get image from request
+        writeImage(request);
 
         // Upload image to DB
 
         // if error send back API error
 
         // if Browser send back 200 with empty body
+        System.out.println(request.getValue("User-Agent"));
+        
+        try {
+            ByteArrayOutputStream writer = response.getOutputStream();
+            response.setStatus("200");
+            writer.write("status 200!".getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // if client send back 200 with list of images in db for user
     }
+
+    private void writeImage(HttpRequest request) {
+        // Get image from request
+        try {
+            String dir = "C:\\Term3\\ClientServer\\COMP3940_Assignment2\\3940-A2\\images\\";
+            //String dir = "./";
+            String fileName = request.getFileName("image");
+            
+            System.out.println("Reading image");
+            OutputStream output = new FileOutputStream(new File(dir + fileName));
+
+            String file = request.getFile(fileName);
+            InputStream input = new ByteArrayInputStream(file.getBytes());
+            System.out.println("Going to read now...");
+
+            while(input.available() != 0) {
+                output.write(input.read());
+            }
+
+            System.out.println("read and wrote image");
+
+            input.close();
+            output.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

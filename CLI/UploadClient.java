@@ -1,4 +1,4 @@
-package CLI;
+
 
 import java.io.*;
 import java.net.*;
@@ -17,7 +17,8 @@ public class UploadClient {
             OutputStream out = socket.getOutputStream();
             // FileInputStream fis = new FileInputStream("AndroidLogo.png");
             // byte[] bytes = fis.readAllBytes();
-            out.write("This is a test".getBytes());
+            out.write("This is a test\r\n".getBytes());
+            out.write("User-Agent: CLI\r\n".getBytes());
             socket.shutdownOutput();
             // fis.close();
             System.out.println("Came this far\n");
