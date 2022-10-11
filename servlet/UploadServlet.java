@@ -79,5 +79,8 @@ public class UploadServlet implements HttpServlet {
             e.printStackTrace();
         }
     }
+    private boolean isCLI(HttpRequest request) {
+        return Boolean.parseBoolean((String) request.getAttribute("isCLI"));
+    }
 
 }
