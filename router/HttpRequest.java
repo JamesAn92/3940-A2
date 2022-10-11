@@ -35,7 +35,8 @@ public class HttpRequest {
             hex += String.format("%02X", i);
         }
 
-        System.out.print(hex);
+        // TODO REMOVE
+        // System.out.print(hex);
 
         seperatedRequest = serperateRequest(wholeStream);
         head = seperatedRequest[0].split("\r\n");
@@ -89,15 +90,12 @@ public class HttpRequest {
     private String[] serperateRequest(String stream) {
         String[] result = new String[2];
         for (int i = 0; i < stream.length() - HEAD_BODY_DELIM.length() + 1; i++) {
-            // System.out.println(i);
             if (stream.substring(i, i + HEAD_BODY_DELIM.length()).equals(HEAD_BODY_DELIM)) {
                 result[0] = stream.substring(0, i);
                 result[1] = stream.substring(i + HEAD_BODY_DELIM.length());
-                System.out.println(result[1]);
                 return result;
             }
         }
-        System.out.println(result[1]);
         return result;
     }
 
@@ -110,6 +108,8 @@ public class HttpRequest {
      * @param startingIndex
      */
     private void parseFormData(String stream) {
+        // TODO REMOVE
+        // System.out.println(boundary);
         String[] separatedByBoundary = stream.split(boundary);
 
         // loop through each form data (start at 1 to discard the item before the first
@@ -135,18 +135,20 @@ public class HttpRequest {
                     if (keyVal[0].contains("Content-Disposition")) {
                         key = parseContentDisposition(keyVal[1]);
                     } else {
-                        System.out.println("content data parsed:");
-                        System.out.println(keyVal[0].trim());
-                        System.out.println(keyVal[1].trim());
+                        // TODO REMOVE
+                        // System.out.println("content data parsed:");
+                        // System.out.println(keyVal[0].trim());
+                        // System.out.println(keyVal[1].trim());
                         keyValues.put(keyVal[0].trim(), keyVal[1].trim());
                     }
                 }
             }
 
             // parse the body of the form data
-            System.out.println("body parsed: ");
-            System.out.println(formDataBody.trim());
-            System.out.println("end body parsed");
+            // TODO PARSE
+            // System.out.println("body parsed: ");
+            // System.out.println(formDataBody.trim());
+            // System.out.println("end body parsed");
 
             if (image.get(key) == null) {
                 // if there is NO value for the image key, then we don't have an image!
@@ -165,7 +167,8 @@ public class HttpRequest {
         String[] contentDispositionVals = contentDisposition.split(";");
 
         // get the key (start at index 1 because we want to ignore 'form-data')
-        System.out.println(contentDispositionVals[1]);
+        // TODO REMOVE
+        // System.out.println(contentDispositionVals[1]);
         String keyWithQuotes = contentDispositionVals[1].trim().split("=")[1];
         String key = keyWithQuotes.substring(1, keyWithQuotes.length() - 1);
 
@@ -223,6 +226,7 @@ public class HttpRequest {
     }
 
     public String getFileName(String imageName) {
+        System.out.println(image.toString());
         return image.get(imageName);
     }
 

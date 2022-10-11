@@ -47,7 +47,7 @@ public class UploadServlet implements HttpServlet {
 
         // if Browser send back 200 with empty body
         System.out.println(request.getValue("User-Agent"));
-        
+
         try {
             ByteArrayOutputStream writer = response.getOutputStream();
             response.setStatus("200");
@@ -62,10 +62,10 @@ public class UploadServlet implements HttpServlet {
     private void writeImage(HttpRequest request) {
         // Get image from request
         try {
-            String dir = "C:\\Term3\\ClientServer\\COMP3940_Assignment2\\3940-A2\\images\\";
-            //String dir = "./";
-            String fileName = request.getFileName("image");
-            
+            String dir = ".\\images\\";
+            // String dir = "./";
+            String fileName = request.getFileName("fileName");
+
             System.out.println("Reading image");
             OutputStream output = new FileOutputStream(new File(dir + fileName));
 
@@ -73,7 +73,7 @@ public class UploadServlet implements HttpServlet {
             InputStream input = new ByteArrayInputStream(file.getBytes());
             System.out.println("Going to read now...");
 
-            while(input.available() != 0) {
+            while (input.available() != 0) {
                 output.write(input.read());
             }
 
@@ -86,5 +86,5 @@ public class UploadServlet implements HttpServlet {
             e.printStackTrace();
         }
     }
-    
+
 }
