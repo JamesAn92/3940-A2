@@ -11,6 +11,7 @@ import javax.swing.JPopupMenu.Separator;
 public class HttpRequest {
 
     private String HEAD_BODY_DELIM = "\r\n\r\n";
+    private String BOUNDARY_PROTOCOL_HYPENS = "--";
     private String method;
     private String URL;
     private String version;
@@ -73,7 +74,7 @@ public class HttpRequest {
 
             // if we reach content type obtain the boundary
             if (tempValue[0].equals("Content-Type") && tempValue[1].contains("multipart/form-data")) {
-                boundary = tempValue[1].split(";")[1].split("=")[1];
+                boundary = BOUNDARY_PROTOCOL_HYPENS + tempValue[1].split(";")[1].split("=")[1];
                 tempValue[1] = tempValue[1].split(";")[0];
             }
 
@@ -119,6 +120,8 @@ public class HttpRequest {
             String formDataHead = separatedFormData[0];
             String formDataBody = separatedFormData[1];
 
+            // TODO REMOVE
+            System.out.println(formDataBody);
             if (formDataHead == null) {
                 // if for some reason there is no head in the form data early, we are done
                 return;
@@ -226,7 +229,7 @@ public class HttpRequest {
     }
 
     public String getFileName(String imageName) {
-        System.out.println(image.toString());
+        // System.out.println(image.toString());
         return image.get(imageName);
     }
 
