@@ -4,7 +4,7 @@ import java.io.*;
 import router.Router;
 
 public class Server {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(8999);
