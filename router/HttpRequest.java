@@ -28,8 +28,14 @@ public class HttpRequest {
         while (inputStream.available() != 0) {
             wholeStream += (char) inputStream.read();
         }
+        String hex = "";
 
-        System.out.println(wholeStream);
+        // Iterating through each byte in the array
+        for (byte i : wholeStream.getBytes()) {
+            hex += String.format("%02X", i);
+        }
+
+        System.out.print(hex);
 
         seperatedRequest = serperateRequest(wholeStream);
         head = seperatedRequest[0].split("\r\n");
@@ -46,8 +52,8 @@ public class HttpRequest {
             // Parse body as form data
             parseFormData(body);
         } else {
-        // If not form data
-        // parseBody();
+            // If not form data
+            // parseBody();
         }
     }
 
@@ -82,13 +88,16 @@ public class HttpRequest {
      */
     private String[] serperateRequest(String stream) {
         String[] result = new String[2];
-        for (int i = 0; i < stream.length() - HEAD_BODY_DELIM.length(); i++) {
+        for (int i = 0; i < stream.length() - HEAD_BODY_DELIM.length() + 1; i++) {
+            // System.out.println(i);
             if (stream.substring(i, i + HEAD_BODY_DELIM.length()).equals(HEAD_BODY_DELIM)) {
                 result[0] = stream.substring(0, i);
                 result[1] = stream.substring(i + HEAD_BODY_DELIM.length());
+                System.out.println(result[1]);
                 return result;
             }
         }
+        System.out.println(result[1]);
         return result;
     }
 
@@ -103,7 +112,8 @@ public class HttpRequest {
     private void parseFormData(String stream) {
         String[] separatedByBoundary = stream.split(boundary);
 
-        // loop through each form data (start at 1 to discard the item before the first boundary because all it consists of is /r/n)
+        // loop through each form data (start at 1 to discard the item before the first
+        // boundary because all it consists of is /r/n)
         for (int i = 1; i < separatedByBoundary.length; i++) {
             String[] separatedFormData = serperateRequest(separatedByBoundary[i]);
             String formDataHead = separatedFormData[0];
@@ -120,7 +130,7 @@ public class HttpRequest {
             String[] formDataHeadLines = formDataHead.split("\r\n");
             for (int j = 0; j < formDataHeadLines.length; j++) {
                 if (!formDataHeadLines[j].isBlank()) {
-                    
+
                     String[] keyVal = formDataHeadLines[j].split(":");
                     if (keyVal[0].contains("Content-Disposition")) {
                         key = parseContentDisposition(keyVal[1]);
@@ -142,7 +152,8 @@ public class HttpRequest {
                 // if there is NO value for the image key, then we don't have an image!
                 keyValues.put(key, formDataBody.trim());
             } else {
-                // if there is a value for the image key, that is the filepath, map it to the image
+                // if there is a value for the image key, that is the filepath, map it to the
+                // image
                 image.put(image.get(key), formDataBody);
             }
         }
@@ -157,8 +168,9 @@ public class HttpRequest {
         System.out.println(contentDispositionVals[1]);
         String keyWithQuotes = contentDispositionVals[1].trim().split("=")[1];
         String key = keyWithQuotes.substring(1, keyWithQuotes.length() - 1);
-        
-        //if the length is greater than 1, then we have a file path, store it to the value of the key
+
+        // if the length is greater than 1, then we have a file path, store it to the
+        // value of the key
         if (contentDispositionVals.length > 2) {
             String fileNameWithQuotes = contentDispositionVals[2].trim().split("=")[1];
             String fileName = fileNameWithQuotes.substring(1, fileNameWithQuotes.length() - 1);
@@ -203,7 +215,7 @@ public class HttpRequest {
 
     public String getFile(String fileName) {
         return image.get(fileName);
-        //return new FileInputStream(image.get(fileName));
+        // return new FileInputStream(image.get(fileName));
     }
 
     public String getValue(String key) {
