@@ -4,7 +4,7 @@ import java.io.*;
 import router.Router;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(8999);
@@ -15,7 +15,6 @@ public class Server {
         while (true) {
             System.out.println("Waiting for connection.....");
             new Router(serverSocket.accept()).start();
-            throw new IOException("Yeet");
         }
 
     }

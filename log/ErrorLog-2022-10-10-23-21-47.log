@@ -1,0 +1,4 @@
+Oct. 10, 2022 11:21:47 P.M. exceptions.AspectLogger beforeMain
+INFO: Starting Server
+Oct. 10, 2022 11:22:17 P.M. exceptions.AspectLogger doSomethingWithException
+INFO: Yeet

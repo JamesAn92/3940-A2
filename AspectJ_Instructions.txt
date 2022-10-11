@@ -1,5 +1,5 @@
 Unzip the aop zip file and copy the folder to c:\temp and then run the following command:
-java �javaagent:c:\temp\aop\aspectj\lib\aspectweaver.jar -classpath .;c:\temp\aop\aspectj\lib\aspectjrt.jar;c:\temp\aop\aspectj\lib\aspectweaver.jar HelloWorld
+java -javaagent:c:\temp\aop\aspectj\lib\aspectweaver.jar -classpath .;c:\temp\aop\aspectj\lib\aspectjrt.jar;c:\temp\aop\aspectj\lib\aspectweaver.jar HelloWorld
 
 Otherwise perform the following steps:
 1.  create c:/temp/aop as well as c:/temp/aop/aspectj folder.  
