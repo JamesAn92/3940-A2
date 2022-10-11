@@ -6,7 +6,7 @@ public class Activity {
     private String dirName = null;
 
     public static void main(String[] args) {
-        new CLI.Activity().onCreate();
+        new Activity().onCreate();
     }
 
     public Activity() {

@@ -1,29 +1,53 @@
 package router;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
 public class HttpRequest {
 
+    private String HEAD_BODY_DELIM = "\r\n\r\n";
+    private String BOUNDARY_PROTOCOL_HYPENS = "--";
     private String method;
     private String URL;
     private String version;
+    private String fileName = null;
     private InputStream inputStream = null;
-    private HashMap<String, String> keyValues = new HashMap<String, String>();
+    private HashMap<String, String> keyValues = new HashMap<>();
+    private HashMap<String, ByteArrayOutputStream> image = new HashMap<>();
+    private String boundary = null;
 
     public HttpRequest(InputStream inputStream) throws Exception {
         System.out.println("Hello I am");
         this.inputStream = inputStream;
         String wholeStream = "";
+        String[] head;
+        String body;
+        String[] seperatedRequest;
         while (inputStream.available() != 0) {
-            wholeStream += (char) inputStream.read();
+            char ch = (char) (inputStream.read() & 0xFF);
+            wholeStream += ch;
         }
-        System.out.println(wholeStream);
+
+        seperatedRequest = serperateRequest(wholeStream);
+        head = seperatedRequest[0].split("\r\n");
+
+        body = seperatedRequest[1];
+
         // Splits the stream into lines and stores into array
-        String[] arrayStream = wholeStream.split("\n");
-        parseMethodAndProtocol(arrayStream[0]);
-        parseHeaders(arrayStream);
+        // String[] arrayStream = wholeStream.split("\n");
+        parseMethodAndProtocol(head[0]);
+        parseHeaders(head);
+
+        if (keyValues.containsKey("Content-Type") &&
+                keyValues.get("Content-Type").equals("multipart/form-data")) {
+            // Parse body as form data
+            parseFormData(body);
+        } else {
+            // If not form data
+            // parseBody();
+        }
     }
 
     // Sets method, url, version from first line of inputstream
@@ -38,8 +62,105 @@ public class HttpRequest {
     private void parseHeaders(String[] stream) throws ArrayIndexOutOfBoundsException {
         for (int i = 1; i < stream.length - 1; i++) {
             String[] tempValue = stream[i].split(": ");
+
+            // if we reach content type obtain the boundary
+            if (tempValue[0].equals("Content-Type") && tempValue[1].contains("multipart/form-data")) {
+                boundary = BOUNDARY_PROTOCOL_HYPENS + tempValue[1].split(";")[1].split("=")[1];
+                tempValue[1] = tempValue[1].split(";")[0];
+            }
+
+            // store headers in a map
             keyValues.put(tempValue[0].trim(), tempValue[1].trim());
         }
+    }
+
+    /**
+     * Seperates request head and body
+     * 
+     * @param stream
+     */
+    private String[] serperateRequest(String stream) {
+        String[] result = new String[2];
+        for (int i = 0; i < stream.length() - HEAD_BODY_DELIM.length() + 1; i++) {
+            if (stream.substring(i, i + HEAD_BODY_DELIM.length()).equals(HEAD_BODY_DELIM)) {
+                result[0] = stream.substring(0, i);
+                result[1] = stream.substring(i + HEAD_BODY_DELIM.length());
+                return result;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This will parse all form data and store it as a key value pair.
+     * in the case the type is image, we will save it as a map and accesible
+     * using a getImage().
+     * 
+     * @param stream
+     * @param startingIndex
+     */
+    private void parseFormData(String stream) {
+        String[] separatedByBoundary = stream.split(boundary);
+
+        // loop through each form data (start at 1 to discard the item before the first
+        // boundary because all it consists of is /r/n)
+        for (int i = 1; i < separatedByBoundary.length; i++) {
+            String[] separatedFormData = serperateRequest(separatedByBoundary[i]);
+            String formDataHead = separatedFormData[0];
+            String formDataBody = separatedFormData[1];
+            if (formDataHead == null) {
+                // if for some reason there is no head in the form data early, we are done
+                return;
+            }
+
+            // parse the head of the current form data
+
+            String key = null;
+            String[] formDataHeadLines = formDataHead.split("\r\n");
+            for (int j = 0; j < formDataHeadLines.length; j++) {
+                if (!formDataHeadLines[j].isBlank()) {
+
+                    String[] keyVal = formDataHeadLines[j].split(":");
+                    if (keyVal[0].contains("Content-Disposition")) {
+                        key = parseContentDisposition(keyVal[1]);
+                    } else {
+                        keyValues.put(keyVal[0].trim(), keyVal[1].trim());
+                    }
+                }
+            }
+
+            // parse the body of the form data from char to bytes
+            if (key.equals("fileName")) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                for (char ch : formDataBody.toCharArray()) {
+                    baos.write((byte) ch);
+                }
+                image.put("image", baos);
+
+            }
+        }
+
+    }
+
+    private String parseContentDisposition(String contentDisposition) {
+        // split the content disposition
+        String[] contentDispositionVals = contentDisposition.split(";");
+
+        // get the key (start at index 1 because we want to ignore 'form-data')
+        String keyWithQuotes = contentDispositionVals[1].trim().split("=")[1];
+        String key = keyWithQuotes.substring(1, keyWithQuotes.length() - 1);
+
+        // if the length is greater than 1, then we have a file path, store it to the
+        // value of the key
+        if (contentDispositionVals.length > 2) {
+            String fileNameWithQuotes = contentDispositionVals[2].trim().split("=")[1];
+            String imageName = fileNameWithQuotes.substring(1, fileNameWithQuotes.length() - 1);
+            // image.put(key, fileName);
+            fileName = imageName;
+        } else {
+            // image.put(key, null);
+        }
+        return key;
     }
 
     public InputStream getInputStream() {
@@ -72,6 +193,22 @@ public class HttpRequest {
 
     public String getAttribute(String headerKey) {
         return keyValues.get(headerKey);
+    }
+
+    public HashMap<String, ByteArrayOutputStream> getImage() {
+        return image;
+    }
+
+    public ByteArrayOutputStream getFile() {
+        return image.get("image");
+    }
+
+    public String getValue(String key) {
+        return keyValues.get(key);
+    }
+
+    public String getFileName() {
+        return this.fileName;
     }
 
 }

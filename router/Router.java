@@ -3,6 +3,7 @@ package router;
 import servlet.*;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -17,7 +18,7 @@ public class Router extends Thread {
     private Socket socket;
 
     public Router(Socket socket) {
-        System.out.println("Router");
+        // System.out.println("Router");
         this.socket = socket;
     }
 
@@ -31,7 +32,7 @@ public class Router extends Thread {
             // Reflection
             // Because we only have one URL we will only use UploadServlet
             myClass = Class.forName("servlet.UploadServlet");
-            HttpServlet thread = (HttpServlet) myClass.newInstance();
+            HttpServlet thread = (HttpServlet) myClass.getConstructor().newInstance();
 
             // call appropriate method
             switch (request.getMethod()) {

@@ -16,7 +16,5 @@ public class Server {
             System.out.println("Waiting for connection.....");
             new Router(serverSocket.accept()).start();
         }
-
     }
-
 }

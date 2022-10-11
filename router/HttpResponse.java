@@ -15,8 +15,8 @@ public class HttpResponse {
     private HashMap<String, Object> headers = new HashMap<>();
 
     public HttpResponse(ByteArrayOutputStream outputStream) {
-        System.out.println(outputStream);
-        System.out.println("HttpResponse");
+        // System.out.println(outputStream);
+        // System.out.println("HttpResponse");
         this.privateStream = outputStream;
     }
 
