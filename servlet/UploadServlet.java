@@ -3,7 +3,6 @@ package servlet;
 import router.HttpRequest;
 import router.HttpResponse;
 import java.io.*;
-import java.time.Clock;
 
 public class UploadServlet implements HttpServlet {
 
@@ -42,9 +41,7 @@ public class UploadServlet implements HttpServlet {
         writeImage(request);
 
         // Upload image to DB
-
         // if error send back API error
-
         // if Browser send back 200 with empty body
         System.out.println(request.getValue("User-Agent"));
 
@@ -64,22 +61,16 @@ public class UploadServlet implements HttpServlet {
         try {
             String dir = ".\\images\\";
             // String dir = "./";
-            String fileName = request.getFileName("fileName");
+            String fileName = request.getFileName();
 
             System.out.println("Reading image");
             OutputStream output = new FileOutputStream(new File(dir + fileName));
 
-            String file = request.getFile(fileName);
-            InputStream input = new ByteArrayInputStream(file.getBytes());
-            System.out.println("Going to read now...");
+            ByteArrayOutputStream file = request.getFile();
 
-            while (input.available() != 0) {
-                output.write(input.read());
-            }
+            output.write(file.toByteArray());
 
             System.out.println("read and wrote image");
-
-            input.close();
             output.close();
 
         } catch (Exception e) {

@@ -1,12 +1,9 @@
 package router;
 
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
-
-import javax.swing.JPopupMenu.Separator;
 
 public class HttpRequest {
 
@@ -15,9 +12,10 @@ public class HttpRequest {
     private String method;
     private String URL;
     private String version;
+    private String fileName = null;
     private InputStream inputStream = null;
     private HashMap<String, String> keyValues = new HashMap<>();
-    private HashMap<String, String> image = new HashMap<>();
+    private HashMap<String, ByteArrayOutputStream> image = new HashMap<>();
     private String boundary = null;
 
     public HttpRequest(InputStream inputStream) throws IOException {
@@ -27,17 +25,9 @@ public class HttpRequest {
         String body;
         String[] seperatedRequest;
         while (inputStream.available() != 0) {
-            wholeStream += (char) inputStream.read();
+            char ch = (char) (inputStream.read() & 0xFF);
+            wholeStream += ch;
         }
-        String hex = "";
-
-        // Iterating through each byte in the array
-        for (byte i : wholeStream.getBytes()) {
-            hex += String.format("%02X", i);
-        }
-
-        // TODO REMOVE
-        // System.out.print(hex);
 
         seperatedRequest = serperateRequest(wholeStream);
         head = seperatedRequest[0].split("\r\n");
@@ -45,7 +35,7 @@ public class HttpRequest {
         body = seperatedRequest[1];
 
         // Splits the stream into lines and stores into array
-        String[] arrayStream = wholeStream.split("\n");
+        // String[] arrayStream = wholeStream.split("\n");
         parseMethodAndProtocol(head[0]);
         parseHeaders(head);
 
@@ -109,8 +99,6 @@ public class HttpRequest {
      * @param startingIndex
      */
     private void parseFormData(String stream) {
-        // TODO REMOVE
-        // System.out.println(boundary);
         String[] separatedByBoundary = stream.split(boundary);
 
         // loop through each form data (start at 1 to discard the item before the first
@@ -119,9 +107,6 @@ public class HttpRequest {
             String[] separatedFormData = serperateRequest(separatedByBoundary[i]);
             String formDataHead = separatedFormData[0];
             String formDataBody = separatedFormData[1];
-
-            // TODO REMOVE
-            System.out.println(formDataBody);
             if (formDataHead == null) {
                 // if for some reason there is no head in the form data early, we are done
                 return;
@@ -138,28 +123,19 @@ public class HttpRequest {
                     if (keyVal[0].contains("Content-Disposition")) {
                         key = parseContentDisposition(keyVal[1]);
                     } else {
-                        // TODO REMOVE
-                        // System.out.println("content data parsed:");
-                        // System.out.println(keyVal[0].trim());
-                        // System.out.println(keyVal[1].trim());
                         keyValues.put(keyVal[0].trim(), keyVal[1].trim());
                     }
                 }
             }
 
-            // parse the body of the form data
-            // TODO PARSE
-            // System.out.println("body parsed: ");
-            // System.out.println(formDataBody.trim());
-            // System.out.println("end body parsed");
+            // parse the body of the form data from char to bytes
+            if (key.equals("fileName")) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                for (char ch : formDataBody.toCharArray()) {
+                    baos.write((byte) ch);
+                }
+                image.put("image", baos);
 
-            if (image.get(key) == null) {
-                // if there is NO value for the image key, then we don't have an image!
-                keyValues.put(key, formDataBody.trim());
-            } else {
-                // if there is a value for the image key, that is the filepath, map it to the
-                // image
-                image.put(image.get(key), formDataBody);
             }
         }
 
@@ -170,8 +146,6 @@ public class HttpRequest {
         String[] contentDispositionVals = contentDisposition.split(";");
 
         // get the key (start at index 1 because we want to ignore 'form-data')
-        // TODO REMOVE
-        // System.out.println(contentDispositionVals[1]);
         String keyWithQuotes = contentDispositionVals[1].trim().split("=")[1];
         String key = keyWithQuotes.substring(1, keyWithQuotes.length() - 1);
 
@@ -179,10 +153,11 @@ public class HttpRequest {
         // value of the key
         if (contentDispositionVals.length > 2) {
             String fileNameWithQuotes = contentDispositionVals[2].trim().split("=")[1];
-            String fileName = fileNameWithQuotes.substring(1, fileNameWithQuotes.length() - 1);
-            image.put(key, fileName);
+            String imageName = fileNameWithQuotes.substring(1, fileNameWithQuotes.length() - 1);
+            // image.put(key, fileName);
+            fileName = imageName;
         } else {
-            image.put(key, null);
+            // image.put(key, null);
         }
         return key;
     }
@@ -219,18 +194,20 @@ public class HttpRequest {
         return keyValues.get(headerKey);
     }
 
-    public String getFile(String fileName) {
-        return image.get(fileName);
-        // return new FileInputStream(image.get(fileName));
+    public HashMap<String, ByteArrayOutputStream> getImage() {
+        return image;
+    }
+
+    public ByteArrayOutputStream getFile() {
+        return image.get("image");
     }
 
     public String getValue(String key) {
         return keyValues.get(key);
     }
 
-    public String getFileName(String imageName) {
-        // System.out.println(image.toString());
-        return image.get(imageName);
+    public String getFileName() {
+        return this.fileName;
     }
 
 }
