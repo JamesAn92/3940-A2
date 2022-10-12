@@ -19,7 +19,7 @@ public class HttpRequest {
     private String boundary = null;
 
     public HttpRequest(InputStream inputStream) throws Exception {
-        System.out.println("Hello I am");
+
         this.inputStream = inputStream;
         String wholeStream = "";
         String[] head;
@@ -29,7 +29,7 @@ public class HttpRequest {
             char ch = (char) (inputStream.read() & 0xFF);
             wholeStream += ch;
         }
-
+        
         seperatedRequest = serperateRequest(wholeStream);
         head = seperatedRequest[0].split("\r\n");
 
@@ -123,9 +123,9 @@ public class HttpRequest {
                     String[] keyVal = formDataHeadLines[j].split(":");
                     if (keyVal[0].contains("Content-Disposition")) {
                         key = parseContentDisposition(keyVal[1]);
-                    } else {
-                        keyValues.put(keyVal[0].trim(), keyVal[1].trim());
+                        continue;
                     }
+                    keyValues.put(keyVal[0].trim(), keyVal[1].trim());
                 }
             }
 
@@ -136,8 +136,11 @@ public class HttpRequest {
                     baos.write((byte) ch);
                 }
                 image.put("image", baos);
-
+                continue; 
             }
+
+
+            this.keyValues.put(key, formDataBody);
         }
 
     }
@@ -209,6 +212,14 @@ public class HttpRequest {
 
     public String getFileName() {
         return this.fileName;
+    }
+
+    public boolean hasAttribute(String attributeName) {
+        return keyValues.containsKey(attributeName);
+    }
+
+    public boolean hasImage() {
+        return image.containsKey("image");
     }
 
 }

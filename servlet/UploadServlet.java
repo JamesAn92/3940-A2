@@ -39,7 +39,14 @@ public class UploadServlet implements HttpServlet {
     }
 
     @Override
-    public void doPost(HttpRequest request, HttpResponse response) {
+    public void doPost(HttpRequest request, HttpResponse response) throws Exception {
+
+        // Check if Data, caption, and image is there.
+        if (!request.hasAttribute("caption") || !request.hasAttribute("date") || !request.hasImage()) {
+            System.out.println("I am causing an API Error");
+            throw new APIError("Caption, date, and image are required fields in form data.", 400);
+        }
+
         writeImage(request);
 
         // Upload image to DB
@@ -65,14 +72,12 @@ public class UploadServlet implements HttpServlet {
             // String dir = "./";
             String fileName = request.getFileName();
 
-            System.out.println("Reading image");
             OutputStream output = new FileOutputStream(new File(dir + fileName));
 
             ByteArrayOutputStream file = request.getFile();
 
             output.write(file.toByteArray());
 
-            System.out.println("read and wrote image");
             output.close();
 
         } catch (Exception e) {

@@ -10,7 +10,7 @@ public class HttpResponse {
     private final String HTTP_VERSION = "HTTP/1.1";
     private String status = "200";
     private String statusPhrase = "OK";
-    private ByteArrayOutputStream privateStream;
+    private ByteArrayOutputStream privateStream = new ByteArrayOutputStream();
     private ByteArrayOutputStream publicStream = new ByteArrayOutputStream();
     private HashMap<String, Object> headers = new HashMap<>();
 
@@ -19,6 +19,11 @@ public class HttpResponse {
         // System.out.println("HttpResponse");
         this.privateStream = outputStream;
     }
+
+    /** 
+     * Empty constructor
+     */
+    public HttpResponse() {};
 
     public ByteArrayOutputStream getOutputStream() {
         return publicStream;

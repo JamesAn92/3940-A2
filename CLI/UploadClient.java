@@ -21,7 +21,7 @@ public class UploadClient {
             out.write("User-Agent: CLI\r\n".getBytes());
             socket.shutdownOutput();
             // fis.close();
-            System.out.println("Came this far\n");
+            // System.out.println("Came this far\n");
             String filename = "";
             while ((filename = in.readLine()) != null) {
                 listing += filename;

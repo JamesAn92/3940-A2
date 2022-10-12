@@ -24,6 +24,7 @@ public class Router extends Thread {
 
     @Override
     public void run() {
+
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             HttpRequest request = new HttpRequest(socket.getInputStream());
@@ -49,11 +50,19 @@ public class Router extends Thread {
             socket.close();
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            if (e.getClass() == APIError.class) {
-                System.out.println("APIError");
-            }
 
-        } finally {
+            try {
+                OutputStream out =socket.getOutputStream();    
+                if (e.getClass() == APIError.class) {
+                    APIError error = (APIError) e;
+                    HttpResponse response = new HttpResponse();
+                    response.setStatus("" + error.getStatusCode());
+                    out.write(response.newBuilder().toByteArray());
+                }
+                socket.close();
+            } catch (IOException err) {
+                System.out.println("Another exception" + e.getMessage());
+            }
 
         }
         /*

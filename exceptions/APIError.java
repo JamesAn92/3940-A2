@@ -2,6 +2,7 @@ package exceptions;
 
 public class APIError extends Exception {
 
+    private final int DEFAULT_STATUS_CODE = 500; 
     private long statusCode;
 
     public APIError(String message, long statusCode) {
@@ -9,12 +10,12 @@ public class APIError extends Exception {
         this.statusCode = statusCode;
     }
 
+    public APIError(String message) {
+        super(message);
+        this.statusCode = DEFAULT_STATUS_CODE;
+    }
+
     public long getStatusCode() {
         return statusCode;
     }
-
-    public void setStatusCode(long statusCode) {
-        this.statusCode = statusCode;
-    }
-
 }

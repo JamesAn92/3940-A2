@@ -1,0 +1,4 @@
+Oct. 11, 2022 7:33:39 P.M. exceptions.AspectLogger beforeMain
+INFO: Starting Server
+Oct. 11, 2022 7:33:42 P.M. exceptions.AspectLogger exceptionLog
+INFO: Caption, date, and image are required fields in form data.
