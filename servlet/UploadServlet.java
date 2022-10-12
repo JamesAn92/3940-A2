@@ -40,6 +40,7 @@ public class UploadServlet implements HttpServlet {
 
     @Override
     public void doPost(HttpRequest request, HttpResponse response) {
+        System.out.println(request.dump());
         writeImage(request);
 
         // Upload image to DB

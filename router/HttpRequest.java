@@ -17,11 +17,12 @@ public class HttpRequest {
     private HashMap<String, String> keyValues = new HashMap<>();
     private HashMap<String, ByteArrayOutputStream> image = new HashMap<>();
     private String boundary = null;
+    private String wholeStream = "";
 
     public HttpRequest(InputStream inputStream) throws Exception {
         System.out.println("Hello I am");
         this.inputStream = inputStream;
-        String wholeStream = "";
+       
         String[] head;
         String body;
         String[] seperatedRequest;
@@ -29,16 +30,20 @@ public class HttpRequest {
             char ch = (char) (inputStream.read() & 0xFF);
             wholeStream += ch;
         }
-
+       // System.out.println(wholeStream);
+        
         seperatedRequest = serperateRequest(wholeStream);
         head = seperatedRequest[0].split("\r\n");
-
+        System.out.println(head[0]);
         body = seperatedRequest[1];
+
+    
 
         // Splits the stream into lines and stores into array
         // String[] arrayStream = wholeStream.split("\n");
         parseMethodAndProtocol(head[0]);
         parseHeaders(head);
+   
 
         if (keyValues.containsKey("Content-Type") &&
                 keyValues.get("Content-Type").equals("multipart/form-data")) {
@@ -60,9 +65,9 @@ public class HttpRequest {
 
     // Parse header and store into Hashmap
     private void parseHeaders(String[] stream) throws ArrayIndexOutOfBoundsException {
-        for (int i = 1; i < stream.length - 1; i++) {
+        for (int i = 2; i < stream.length - 1; i++) {
             String[] tempValue = stream[i].split(": ");
-
+            System.out.println("thiffsalkjfds;");
             // if we reach content type obtain the boundary
             if (tempValue[0].equals("Content-Type") && tempValue[1].contains("multipart/form-data")) {
                 boundary = BOUNDARY_PROTOCOL_HYPENS + tempValue[1].split(";")[1].split("=")[1];
@@ -83,6 +88,7 @@ public class HttpRequest {
         String[] result = new String[2];
         for (int i = 0; i < stream.length() - HEAD_BODY_DELIM.length() + 1; i++) {
             if (stream.substring(i, i + HEAD_BODY_DELIM.length()).equals(HEAD_BODY_DELIM)) {
+                
                 result[0] = stream.substring(0, i);
                 result[1] = stream.substring(i + HEAD_BODY_DELIM.length());
                 return result;
@@ -101,7 +107,7 @@ public class HttpRequest {
      */
     private void parseFormData(String stream) {
         String[] separatedByBoundary = stream.split(boundary);
-
+        System.out.println("Inside pareseFormDaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         // loop through each form data (start at 1 to discard the item before the first
         // boundary because all it consists of is /r/n)
         for (int i = 1; i < separatedByBoundary.length; i++) {
@@ -112,7 +118,7 @@ public class HttpRequest {
                 // if for some reason there is no head in the form data early, we are done
                 return;
             }
-
+            System.out.println("AFTER PARSING");
             // parse the head of the current form data
 
             String key = null;
@@ -209,6 +215,10 @@ public class HttpRequest {
 
     public String getFileName() {
         return this.fileName;
+    }
+
+    public String dump(){
+        return this.wholeStream;
     }
 
 }

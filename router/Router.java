@@ -33,7 +33,7 @@ public class Router extends Thread {
             // Because we only have one URL we will only use UploadServlet
             myClass = Class.forName("servlet.UploadServlet");
             HttpServlet thread = (HttpServlet) myClass.getConstructor().newInstance();
-
+            System.out.println(request.dump());
             // call appropriate method
             switch (request.getMethod()) {
                 case GET:
